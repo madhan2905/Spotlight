@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BT Signal — Spotlight</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --teal:        #28B3B4;
+    --teal-dark:   #1B8385;
+    --teal-ink:    #0F3A3B;
+    --lime:        #D6DF27;
+    --lime-deep:   #A7AF14;
+    --ink:         #16232A;
+    --ink-soft:    #52646B;
+    --paper:       #FBFDFD;
+    --card:        #FFFFFF;
+    --line:        #E4EEEE;
+    --shadow-sm:   0 2px 10px rgba(15, 58, 59, 0.06);
+    --shadow-md:   0 12px 32px rgba(15, 58, 59, 0.10);
+    --shadow-lg:   0 20px 48px rgba(15, 58, 59, 0.14);
+    --radius-lg:   28px;
+    --radius-md:   20px;
+    --radius-sm:   14px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  .wrap{
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 64px 32px 40px;
+  }
+
+  /* ---------- decorative dot-bloom motif (echoes the logo's petal/dot marks, not a redraw) ---------- */
+  .dot{
+    display:inline-block;
+    width:8px; height:8px;
+    border-radius:50%;
+    background: var(--lime);
+    margin-right:2px;
+  }
+  .bloom{
+    position:absolute;
+    pointer-events:none;
+    opacity:.5;
+  }
+  .bloom span{
+    position:absolute;
+    border-radius:50%;
+  }
+
+  /* ---------- eyebrow / masthead ---------- */
+  .masthead{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom: 46px;
+  }
+  .masthead .tag{
+    font-family:'Outfit', sans-serif;
+    font-weight:600;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .masthead .rule{
+    flex:1;
+    height:1px;
+    background: linear-gradient(to right, var(--line), transparent);
+  }
+  .masthead .stamp{
+    font-family:'Outfit', sans-serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight:500;
+  }
+
+  .kicker{
+    font-family:'Outfit', sans-serif;
+    font-weight:700;
+    font-size: 15px;
+    color: var(--teal);
+    letter-spacing: 0.02em;
+    margin: 0 0 6px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  h1.headline{
+    font-family:'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 4vw, 42px);
+    line-height: 1.12;
+    margin: 0 0 40px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    display:grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    align-items:center;
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 44px;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow:hidden;
+    margin-bottom: 56px;
+    opacity:0;
+    transform: translateY(14px);
+    animation: rise .7s ease forwards;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    top:-70px; right:-70px;
+    width:220px; height:220px;
+    border-radius:50%;
+    background: var(--lime);
+    opacity:.10;
+  }
+  .photo-frame{
+    position:relative;
+    width:176px; height:176px;
+    justify-self:center;
+  }
+  .photo-frame .ring{
+    position:absolute;
+    inset:-8px;
+    border-radius:50%;
+    border: 2px solid var(--teal);
+    opacity:.35;
+  }
+  .avatar{
+    width:176px; height:176px;
+    border-radius:50%;
+    background: var(--teal);
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Outfit', sans-serif;
+    font-weight:700;
+    font-size: 56px;
+    box-shadow: var(--shadow-sm);
+    overflow:hidden;
+  }
+  .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-frame .accent-dot{
+    position:absolute;
+    bottom:6px; right:2px;
+    width:22px; height:22px;
+    border-radius:50%;
+    background: var(--lime);
+    border: 4px solid var(--card);
+  }
+
+  .hero-copy .name{
+    font-family:'Outfit', sans-serif;
+    font-weight:800;
+    font-size: clamp(24px, 3vw, 30px);
+    margin:0 0 4px;
+    color: var(--ink);
+  }
+  .hero-copy .role{
+    font-size: 15px;
+    color: var(--teal-dark);
+    font-weight:600;
+    margin:0 0 2px;
+  }
+  .hero-copy .team{
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin:0 0 18px;
+  }
+  .hero-copy .intro{
+    font-size: 17px;
+    line-height:1.65;
+    color: var(--ink);
+    max-width: 56ch;
+  }
+  .hero-copy .intro strong{ color: var(--teal-dark); }
+
+  /* ---------- about / story (2-col magazine layout) ---------- */
+  .story{
+    display:grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+  .story-label{
+    font-family:'Outfit', sans-serif;
+    font-weight:700;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+  }
+  .story-label .dot{ margin-right:6px; }
+  .story-body p{
+    margin: 0 0 20px;
+    font-size: 16.5px;
+    color: var(--ink);
+    max-width: 68ch;
+  }
+  .story-body p:last-child{ margin-bottom:0; }
+  .story-body p::first-letter{
+    font-family:'Outfit', sans-serif;
+  }
+
+  /* ---------- highlight cards ---------- */
+  .section-head{
+    text-align:center;
+    margin: 0 0 30px;
+  }
+  .section-head h2{
+    font-family:'Outfit', sans-serif;
+    font-weight:700;
+    font-size: 24px;
+    margin: 0;
+    color: var(--ink);
+  }
+  .cards{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-bottom: 64px;
+  }
+  .card{
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: 30px 26px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--line);
+    transition: transform .25s ease, box-shadow .25s ease;
+    opacity:0;
+    transform: translateY(14px);
+    animation: rise .6s ease forwards;
+  }
+  .card:hover{
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .card .icon{
+    width:48px; height:48px;
+    border-radius: 14px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 18px;
+  }
+  .card .icon svg{ width:24px; height:24px; }
+  .card:nth-child(1) .icon{ background: rgba(40,179,180,0.12); }
+  .card:nth-child(1) .icon svg{ stroke: var(--teal-dark); }
+  .card:nth-child(2) .icon{ background: rgba(214,223,39,0.22); }
+  .card:nth-child(2) .icon svg{ stroke: var(--lime-deep); }
+  .card:nth-child(3) .icon{ background: rgba(40,179,180,0.12); }
+  .card:nth-child(3) .icon svg{ stroke: var(--teal-dark); }
+  .card h3{
+    font-family:'Outfit', sans-serif;
+    font-weight:700;
+    font-size: 17px;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .card p{
+    margin:0;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- quote ---------- */
+  .quote-block{
+    position:relative;
+    text-align:center;
+    padding: 30px 40px 10px;
+    margin: 0 0 64px;
+  }
+  .quote-mark{
+    font-family:'Outfit', sans-serif;
+    font-size: 96px;
+    font-weight:800;
+    color: var(--lime);
+    line-height:1;
+    opacity:.9;
+    display:block;
+    margin-bottom: -18px;
+  }
+  blockquote{
+    margin:0 auto;
+    max-width: 640px;
+    font-family:'Outfit', sans-serif;
+    font-weight:600;
+    font-size: clamp(22px, 3vw, 30px);
+    line-height:1.4;
+    color: var(--ink);
+  }
+  .quote-rule{
+    width:56px; height:3px;
+    background: var(--teal);
+    border-radius:2px;
+    margin: 22px auto 0;
+  }
+
+  /* ---------- footer ---------- */
+  .footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 16px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .footer-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .footer-brand .mark{
+    width:26px; height:26px;
+    border-radius:50%;
+    background: var(--teal);
+    position:relative;
+    flex-shrink:0;
+  }
+  .footer-brand .mark::after{
+    content:"";
+    position:absolute;
+    width:8px; height:8px;
+    border-radius:50%;
+    background: var(--lime);
+    top:-2px; right:-2px;
+  }
+  .footer-brand .word{
+    font-family:'Outfit', sans-serif;
+    font-weight:700;
+    font-size: 13px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color: var(--ink);
+  }
+  .footer-brand .word span{ color: var(--teal-dark); }
+  .footer-tag{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  @keyframes rise{
+    to{ opacity:1; transform:none; }
+  }
+  .cards .card:nth-child(1){ animation-delay: .05s; }
+  .cards .card:nth-child(2){ animation-delay: .15s; }
+  .cards .card:nth-child(3){ animation-delay: .25s; }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero, .card{ animation: none !important; opacity:1 !important; transform:none !important; }
+    html{ scroll-behavior:auto; }
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 760px){
+    .wrap{ padding: 44px 20px 28px; }
+    .hero{ grid-template-columns: 1fr; text-align:center; padding: 34px 26px; }
+    .photo-frame{ margin: 0 auto; }
+    .hero-copy .intro{ max-width:none; }
+    .story{ grid-template-columns: 1fr; gap:14px; }
+    .cards{ grid-template-columns: 1fr; }
+    .quote-mark{ font-size:72px; }
+    .footer{ flex-direction:column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- masthead -->
+  <div class="masthead">
+    <span class="tag"><span class="dot"></span>BT Signal · Internal Newsletter</span>
+    <span class="rule"></span>
+    <span class="stamp">Issue No. 07 — This Month</span>
+  </div>
+
+  <p class="kicker">🌟 Spotlight</p>
+  <h1 class="headline">Meet This Month's Changemaker</h1>
+
+  <!-- hero -->
+  <section class="hero">
+    <div class="photo-frame">
+      <div class="ring"></div>
+      <div class="avatar">
+        <!-- Replace with: <img src="path/to/photo.jpg" alt="Full Name"> -->
+        JD
+      </div>
+      <div class="accent-dot"></div>
+    </div>
+    <div class="hero-copy">
+      <p class="name">Jane Doe</p>
+      <p class="role">Senior Consultant</p>
+      <p class="team">Automation &amp; Intelligent Systems Team</p>
+      <p class="intro">Meet <strong>Jane Doe</strong>, a Senior Consultant whose innovative approach to automation is helping teams work smarter.</p>
+    </div>
+  </section>
+
+  <!-- about their work -->
+  <section class="story">
+    <div class="story-label"><span class="dot"></span>About Their Work</div>
+    <div class="story-body">
+      <p>Every quarter, one part of the business quietly hits a wall: a process that takes too long, a handoff that loses information, a report that ten people rebuild from scratch every week. For one of our delivery teams, that wall was hiding inside a workflow everyone had learned to live with — until Jane decided that "this is just how it's done" wasn't a good enough answer.</p>
+      <p>Rather than patching the symptom, Jane spent time actually watching how the work happened — where it stalled, who waited on whom, and which steps existed only because "that's how it's always been." From there, she designed and built a lightweight automation layer that removed the manual busywork without removing the judgment calls that still needed a human. It shipped in weeks, not quarters, and it was built to be handed off, not babysat.</p>
+      <p>The impact showed up fast: hours returned to the team every week, fewer errors slipping through, and a template other groups have since asked to borrow. But what earned Jane this feature isn't just the tool — it's the habit behind it. She treats "we've always done it this way" as a question, not an answer, and that mindset is exactly what BT Signal wants more people across the community to see.</p>
+    </div>
+  </section>
+
+  <!-- why we're featuring them -->
+  <div class="section-head">
+    <h2>Why We're Featuring Them</h2>
+  </div>
+  <section class="cards">
+    <div class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.5.4.8 1 .8 1.6v.5h5.4v-.5c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3Z"/></svg>
+      </div>
+      <h3>💡 Innovation</h3>
+      <p>Turned a routine bottleneck into a reusable automation others now build on.</p>
+    </div>
+    <div class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09Z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 19 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2Z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+      </div>
+      <h3>🚀 Process Improvement</h3>
+      <p>Cut a recurring manual workflow down to a fraction of the time it used to take.</p>
+    </div>
+    <div class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <h3>🤝 Community Impact</h3>
+      <p>Shared the approach openly so other teams could adapt it to their own work.</p>
+    </div>
+  </section>
+
+  <!-- quote -->
+  <section class="quote-block">
+    <span class="quote-mark">&ldquo;</span>
+    <blockquote>The best ideas usually begin with a simple question.</blockquote>
+    <div class="quote-rule"></div>
+  </section>
+
+  <!-- footer -->
+  <footer class="footer">
+    <div class="footer-brand">
+      <span class="mark"></span>
+      <span class="word">BT <span>Signal</span></span>
+    </div>
+    <p class="footer-tag">Celebrating the people behind the progress.</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
